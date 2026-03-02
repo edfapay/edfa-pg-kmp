@@ -1,0 +1,35 @@
+name: Build and Publish iOS Library
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Xcode
+      uses: actions/setup-xcode@v1
+      with:
+        xcode-version: 'latest'
+
+    - name: Build the library
+      run: |
+        xcodebuild -scheme YourSchemeName -archivePath ./build/YourLibrary.xcarchive archive
+        xcodebuild -exportArchive -archivePath ./build/YourLibrary.xcarchive -exportPath ./build -exportOptionsPlist ExportOptions.plist
+
+    - name: Publish to SPM
+      run: |
+        # Add your publishing script/command here
+        echo "Publishing release package...";
+
+    - name: Upload release package
+      uses: actions/upload-artifact@v2
+      with:
+        name: YourLibrary
+        path: ./build/YourLibrary.spmbundle
